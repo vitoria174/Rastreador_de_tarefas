@@ -1,85 +1,81 @@
-import json
 import os
+import json
 from datetime import date
 
-data_atual = date.today()
+leitura_file =[]
+lista_tarefas=[]
+arquivo = "dados_tarefas.json"
+data = date.today()
 
-
-lista_tarefa =[]
-lista_concluida = []
-lista_nao_feita = []
-lista_andamento =[]
-
-arquivo = "dados.json"
-def init_file():
+#funcao para criar arquivo json
+def ini_file():
       if not os.path.exists(arquivo):
             with open (arquivo, "w") as file:
-                  json.dump([], file)
-            print("arquivo criado")
+                 json.dump([], file)
       else:
             pass
 
+#função para escrever em arquivo json
+def file_dump(tarefa):
+      try:
+            with open (arquivo, "w") as file:
+                  json.dump(tarefa, file, indent= 4)
+      except:
+            print('Erra na pasta')
+#funcao para ler um arquivo json
+def file_load():
+      
+      try: 
+            with open(arquivo, "r") as file:
+                  json.load(file)
+      
+      except Exception as e:
+            print(f'arquivo vazio {e}')
 
-def load_file():
-      with open (arquivo, "w") as file:
-            json.load(file)
-
+#criando a função adicionar tarefas
 def create_task():
-
-      id = len(lista_tarefa) +1
-      descricao = input("Descrição: ")
-      status = input("Status: ")
-      dta_hoje = str(data_atual)
-      dta_atualizada = str(data_atual)
+      id = len(lista_tarefas)+1
+      descricao = input('Descrição: ').title()
+      status = input('Status: ').title()
+      data_criada =str(data) 
+      data_atualizada = str(data)
       
       tarefas = {
-            "ID" : id,
-            "Descrição" : descricao,
-            "Status" : status,
-            "Data Hoje": dta_hoje,
-            "Data Atualizada" : dta_atualizada
+            "ID" :id,
+            "Descricao" : descricao,
+            "Status":status,
+            "Data Criada":data_criada,
+            "Data Atualizada":data_atualizada
       }
       
-      lista_tarefa.append(tarefas)
-      with open (arquivo, "w") as file:
-            json.dump(lista_tarefa, file)
-            
-def read_task():
-      try:
-            with open(arquivo,"r") as file:
-                  arquivo_tr = json.load(file)
-            for listar in arquivo_tr:
-                  print(listar)
-      except:
-            print('not exists')
-
-def update_task():
-      id_tarefa = int(input('ID tarefa: '))
+      lista_tarefas.append(tarefas)
       
-      for listar in lista_tarefa:
-            if id_tarefa == listar["ID"]:
-                  nova_descricao = input("Nova Descrição: ")
-                  novo_staus = input('Status: ')
-                  listar['Descrição'] = nova_descricao
-                  listar['Status'] = novo_staus
-            
+      file_dump(lista_tarefas)
+
+def read_task():
+      print('1- Listar todas as tarefas')
+      print('2 - Tarefas concluidas')
+      tarefas = file_load()
+      
+      listar = [tarefa for tarefa in tarefas]
       print(listar)
       
-
+            
+#programa principal
 while True:
-      print('1-Adicionar tarefa\n2- Ler tarefas\n3- Atualizar tarefas\n0-Sair')
-      opcao = int(input('Escolha uma opção: '))
+      print('1- adicionar tarefas')
+      print('2- vizualizar tarefas')
+      print('3- atualizar tarefas')
       
-      init_file()
-      
+      ini_file()
+      opcao = int(input('Digite uma opção: '))
       if opcao == 1:
             create_task()
-            
+                  
       if opcao == 2:
             read_task()
-      
-      if opcao == 3:
-            update_task()
-            
+                  
       if opcao == 0:
             break
+     
+     
