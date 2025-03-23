@@ -3,7 +3,7 @@ import json
 from datetime import date
 
 
-lista_tarefas=[]
+
 arquivo = "dados_tarefas.json"
 data = date.today()
 
@@ -23,42 +23,19 @@ def file_dump(tarefa):
       except:
             return print('Erra na pasta')
 #funcao para ler um arquivo json
-def file_load(escolha):
+def file_load():
       
       try: 
             with open(arquivo, "r") as file:
-                  lista_completa = json.load(file)
-            
-            if escolha == 1:
-                  for listar in lista_completa:
-                        print(listar)
-                        
-            if escolha == 2:
-                  for concluidas in lista_completa:
-                        if concluidas['Status'] == 'Concluidas':
-                              print(concluidas)
-                              
-            if escolha == 3:
-                  for naofeito in lista_completa:
-                        if naofeito['Status'] == 'Nao Feito':
-                              print(naofeito)
-            
-            if escolha == 4:
-                  for andamento in lista_completa:
-                        if andamento['Status'] == 'Andamento':
-                              print(andamento)
-                              
-            if escolha == 5:
-                  for cancelado in lista_completa:
-                        if cancelado['Status'] == 'Cancelado':
-                              print(cancelado)
-            
+                  return json.load(file)
       except Exception as e:
             print(f'arquivo vazio {e}')
 
 #criando a função adicionar tarefas
 def create_task():
-      id = len(lista_tarefas)+1
+      lista_tarefa = file_load()
+      
+      id = len(lista_tarefa)+1
       descricao = input('Descrição: ').title()
       status = input('Status: ').title().strip()
       data_criada =str(data) 
@@ -72,9 +49,9 @@ def create_task():
             "Data Atualizada":data_atualizada
       }
       
-      lista_tarefas.append(tarefas)
+      lista_tarefa.append(tarefas)
       
-      file_dump(lista_tarefas)
+      file_dump(lista_tarefa)
 
 def read_task():
       print('1- Listar todas as tarefas')
@@ -82,17 +59,42 @@ def read_task():
       print('3 - Tarefas nao feita ') 
       print('4- Andamento')
       print('5- Cancelado')
+      
+      lista_tarefa = file_load()
+      
       escolha = int(input('Digite uma opção: '))
-      file_load(escolha)
+      
+      if escolha == 1:
+            for listar in lista_tarefa:
+                  print(listar)
+                        
+            if escolha == 2:
+                  for concluidas in lista_tarefa:
+                        if concluidas['Status'] == 'Concluidas':
+                              print(concluidas)
+                              
+            if escolha == 3:
+                  for naofeito in lista_tarefa:
+                        if naofeito['Status'] == 'Nao Feito':
+                              print(naofeito)
+            
+            if escolha == 4:
+                  for andamento in lista_tarefa:
+                        if andamento['Status'] == 'Andamento':
+                              print(andamento)
+                              
+            if escolha == 5:
+                  for cancelado in lista_tarefa:
+                        if cancelado['Status'] == 'Cancelado':
+                              print(cancelado)
       
 def update_task():
 
-      with open (arquivo, 'r') as file:
-            up = json.load(file)
+      lista_tarefa = file_load()
       
       id = int(input("Digite uma id: "))
       
-      for update_file in up:
+      for update_file in lista_tarefa:
             if update_file["ID"] == id:
                   descricao = input('Descrição: ').title()
                   status = input('Status: ').title().strip()
@@ -104,22 +106,27 @@ def update_task():
                   update_file["Data Criada"] = str(data)
                   update_file["Data Atualizada"] = str(data)
                   
-            file_dump(up)
-            file_load(update_file)
+      file_dump(lista_tarefa)
             
 #funcao  deletar
 def delete_task():
       print('Digite o id que deseja deletar')
-      with open(arquivo, "r") as file:
-            deletar = json.loads(file)
       
-      id = int(input('Digite o id: '))
+      lista_tarefa = file_load()
       
-      
-      for lista_deletar in deletar:
-            lista_deletar.pop(id)
+      if len(lista_tarefa) == 0:
+            print('Lista de tarefas vazia')
             
-            file_dump(deletar)
+      else:
+            id_update = int(input('Digite o id que deseja deletar: '))
+            
+            if id_update > len(lista_tarefa):
+                  print('ID nao existe')
+                  
+            for i, cont in enumerate(lista_tarefa):
+                  if cont["ID"] == id_update:
+                        del lista_tarefa[i]
+                        file_dump(lista_tarefa)
 
 #programa principal
 while True:
