@@ -117,9 +117,9 @@ def delete_task():
       
       
       for lista_deletar in deletar:
-            lista_deletar.remove(id)
+            lista_deletar.pop(id)
             
-            file_dump(lista_deletar)
+            file_dump(deletar)
 
 #programa principal
 while True:
