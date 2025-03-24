@@ -72,6 +72,7 @@ def read_task():
       
       if escolha == 1:
             for listar in lista_tarefa:
+                  
                   print(listar)
                         
       if escolha == 2:
